@@ -7,7 +7,6 @@
 
 #include <cstdlib>
 #include <iostream>
-#include "string.h"
 
 using namespace std;
 
@@ -114,33 +113,46 @@ void insertame(int nuevo) {
     }
 }
 
-char trans[10000];
-stringstream ss;
 void preOrden(int i) {
     if (numeros[i] != 0) {
-        strcat(trans,numeros[i]+"\n");
-        if(numeros[i*2+1]!=0){
-            ss << trans << numeros[i] << "->" << numeros[i*2+1] <<  "\n"<<endl;
-            strcat(trans, numeros[i] + "->" + numeros[i*2+1] + "\n");
-        }
-        if(numeros[i*2+2]!=0){
-            strcat(trans,numeros[i] + "->"+numeros[i*2+2] + "\n");
-        }
         preOrden(i * 2 + 1);
+        cout << numeros[i] << "->";        
         preOrden(i * 2 + 2);
     }
 }
 
-void graficardot() {
-    trans = "";
-    preOrden(raiz);
-    char dot[10000];
-    dot = "digraph G {\n";
-    dot += "rankdir=TB;";
-    dot += "node [shape = record, style=filled, fillcolor= lightsalmon];\n";
-    dot += trans;
-    dot += "}";
-    cout<< dot;
+void preOrdenGraf(int i) {
+    if (numeros[i] != 0) {
+        cout << numeros[i] << "[label= \"<C0>|" << numeros[i] << "|<C1>\"];\n";
+        if(numeros[i*2+1]!=0){
+            cout << numeros[i] << ":C0->" << numeros[i*2+1] << ";\n";
+        }
+        if(numeros[i*2+2]!=0){
+            cout << numeros[i] << ":C1->" << numeros[i*2+2] << ";\n";
+        }
+        preOrdenGraf(i * 2 + 1);
+        preOrdenGraf(i * 2 + 2);
+    }
+}
+
+void graficarAVL() {
+    cout << "digraph G {\n";
+    cout << "rankdir=TB;\n";
+    cout << "node [shape = record, style=filled, fillcolor= lightsalmon];\n";
+    preOrdenGraf(raiz);
+    cout << "}\n";
+}
+
+void graficarvector() {
+    cout << "digraph G {\n";
+    cout << "rankdir=TB;\n";
+    cout << "node [shape = record, style=filled, fillcolor= lightsalmon];\n";
+    cout << "vector[label= \"";
+    for(int i = 0; i < 60; i++){
+        cout << numeros[i] << "|";
+    }
+    cout << "\"];\n";
+    cout << "}\n";
 }
 
 bool buscar(int i, int valor) {
@@ -163,18 +175,12 @@ int main(int argc, char** argv) {
     for (int i = 0; i < 12; i++) {
         insertame(entrada[i]);
     }
-    //Numeros
-    for (int i = 0; i < 60; i++) {
-        cout << numeros[i] << ",";
-
-    }
-    cout << endl;
-    /*for (int i = 0; i < 60; i++) {
-        if (numeros[i] != 0) {
-            cout << numeros[i] << "\t" << fe[i] << "\t" << alt_d[i] << "\t" << alt_i[i] << endl;
-        }
-    }*/
-    //preOrden(raiz);
-    graficardot();
+    
+    cout<<"RECORRIDO EN ORDEN"<<endl;
+    preOrden(raiz);
+    cout<<"IMAGEN AVL"<<endl;
+    graficarAVL();
+    cout<<"IMAGEN VECTOR"<<endl;
+    graficarvector();    
     return 0;
 }
