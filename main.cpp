@@ -62,6 +62,7 @@ int rotarSimpleDer(int i) {
 }
 
 int rotarDobreDer(int i) {
+    cout<<"AGREGUE UN IMPRIMIR"<<endl;
     numeros[i * 2 + 2] = rotarSimpleIzq(i * 2 + 2);
     return rotarSimpleDer(i);
 }
